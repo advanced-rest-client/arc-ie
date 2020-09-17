@@ -44,10 +44,10 @@ export class ImportCcTable extends ImportBaseTable {
    */
   _outerTemplate(item, index, selectedIndexes) {
     return html`
-    <anypoint-icon-item data-index="${index}" data-key="${item._id}">
+    <anypoint-icon-item data-index="${index}" data-key="${item.key}">
       <anypoint-checkbox
         data-index="${index}"
-        .checked="${selectedIndexes.indexOf(item._id) !== -1}"
+        .checked="${selectedIndexes.indexOf(item.key) !== -1}"
         slot="item-icon"
         aria-label="Toggle selection"
         tabindex="-1"

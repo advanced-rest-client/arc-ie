@@ -225,6 +225,9 @@ export class ArcExportFormElement extends ExportPanelBase {
     toast.opened = true;
   }
 
+  /**
+   * @param {string} message
+   */
   [notifyError](message) {
     const toast = /** @type PaperToastElement */ (this.shadowRoot.querySelector('#exportError'));
     toast.text = message;

@@ -25,7 +25,14 @@ import '@anypoint-web-components/anypoint-selector/anypoint-selector.js';
 import styles from './CommonStyles.js';
 
 /** @typedef {import('@anypoint-web-components/anypoint-selector').AnypointSelector} AnypointSelector */
+/** @typedef {import('@anypoint-web-components/anypoint-checkbox').AnypointCheckbox} AnypointCheckbox */
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
+
+export const toggleSelectedAll = Symbol('toggleSelectedAll');
+export const toggleSelectedAllClick = Symbol('toggleSelectedAllClick');
+export const selectedHandler = Symbol('selectedHandler');
+export const dataChanged = Symbol('dataChanged');
+export const createSelectionArray = Symbol('createSelectionArray');
 
 /**
  * Base table class. Contains methods and templates to be
@@ -81,7 +88,7 @@ export class ImportBaseTable extends LitElement {
     }
     this._data = value;
     this.requestUpdate('data', old);
-    this._dataChanged(value);
+    this[dataChanged](value);
   }
 
   /**
@@ -91,6 +98,9 @@ export class ImportBaseTable extends LitElement {
     return this.shadowRoot.querySelector('anypoint-selector');
   }
 
+  /**
+   * @returns {any[]} The selected in the view items.
+   */
   get selectedItems() {
     const indexes = this.selectedIndexes;
     const items = this.data;
@@ -99,71 +109,12 @@ export class ImportBaseTable extends LitElement {
       return result;
     }
     items.forEach((item) => {
-      const id = item._id;
+      const id = item.key;
       if (indexes.indexOf(id) !== -1) {
         result[result.length] = item;
       }
     });
     return result;
-  }
-
-  /**
-   * @returns {TemplateResult} A template for the table header
-   */
-  get headerTemplate() {
-    const { tableTitle, selectedIndexes, opened, compatibility } = this;
-    const cnt = selectedIndexes ? selectedIndexes.length : 0;
-    const iconClass = `toggle-icon${(opened ? ' opened' : '')}`;
-    return html`<header class="title" @click="${this.toggleOpened}">
-      <h3>${tableTitle} (${cnt})</h3>
-      <anypoint-icon-button
-        class="${iconClass}"
-        aria-label="Activate to toggle table opened"
-        title="Toggle table opened"
-        ?compatibility="${compatibility}"
-      >
-        <span class="icon">${keyboardArrowDown}</span>
-      </anypoint-icon-button>
-    </header>`;
-  }
-
-  /**
-   * @returns {TemplateResult} A template for the table header
-   */
-  get tableHeaderTemplate() {
-    const { hasSelection, allSelected, selectedIndexes } = this;
-    const tableClass = `table-options${(hasSelection ? '' : ' inactive')}`;
-    const cnt = selectedIndexes ? selectedIndexes.length : 0;
-    return html`
-    <section class="${tableClass}">
-      <anypoint-checkbox
-        class="select-all"
-        .checked="${allSelected}"
-        title="Select / deselect all"
-        aria-label="Activate to select or deselect all"
-        @checked-changed="${this._toggleSelectAll}"
-      ></anypoint-checkbox>
-      <span class="selected-counter hidable">${cnt} item(s) selected</span>
-    </section>`;
-  }
-
-  /**
-   * @returns {TemplateResult} A template for the table content
-   */
-  get contentTemplate() {
-    return html`
-    <anypoint-collapse .opened="${this.opened}">
-      ${this.tableHeaderTemplate}
-      <anypoint-selector
-        multi
-        toggle
-        attrforselected="data-key"
-        selectable="anypoint-icon-item"
-        .selectedValues="${this.selectedIndexes}"
-        @selectedvalues-changed="${this._selectedHandler}">
-      ${this.repeaterTemplate(this.data)}
-      </anypoint-selector>
-    </anypoint-collapse>`;
   }
 
   constructor() {
@@ -175,16 +126,18 @@ export class ImportBaseTable extends LitElement {
 
   firstUpdated() {
     if (this.selectedIndexes.length) {
-      this.__initializing = true;
       this.setSelected(this.selectedIndexes);
-      this.__initializing = false;
     }
   }
 
   /**
    * Toggles opened state
+   * @param {PointerEvent} e
    */
-  toggleOpened() {
+  toggleOpened(e) {
+    if (e.defaultPrevented) {
+      return;
+    }
     this.opened = !this.opened;
   }
 
@@ -192,20 +145,18 @@ export class ImportBaseTable extends LitElement {
    * @param {any[]} items The import data
    * @return {string[]} List of selected ids
    */
-  _createSelectionArray(items) {
-    return (items || []).map((item) => item._id);
+  [createSelectionArray](items) {
+    return (items || []).map((item) => item.key);
   }
 
   /**
    * @param {any[]} [data=[]] The import data
    */
-  _dataChanged(data=[]) {
-    this.__initializing = true;
-    const arr = this._createSelectionArray(data);
+  [dataChanged](data=[]) {
+    const arr = this[createSelectionArray](data);
     this.selectedIndexes = arr;
     this.setSelected(arr);
     this.allSelected = true;
-    this.__initializing = false;
   }
 
   /**
@@ -220,19 +171,34 @@ export class ImportBaseTable extends LitElement {
     node.selectedValues = values;
   }
 
-  _selectedHandler(e) {
+  /**
+   * @param {CustomEvent} e
+   */
+  [selectedHandler](e) {
     this.selectedIndexes = e.detail.value;
     this.requestUpdate();
   }
 
-  _toggleSelectAll(e) {
+  /**
+   * @param {PointerEvent} e
+   */
+  [toggleSelectedAllClick](e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  /**
+   * @param {CustomEvent} e
+   */
+  [toggleSelectedAll](e) {
     const { value } = e.detail;
     this.allSelected = value;
     let indexes = [];
     if (value) {
-      indexes = this._createSelectionArray(this.data);
+      indexes = this[createSelectionArray](this.data);
     }
     this.setSelected(indexes);
+    this.requestUpdate();
   }
 
   /**
@@ -240,8 +206,8 @@ export class ImportBaseTable extends LitElement {
    */
   render() {
     return html`
-    ${this.headerTemplate}
-    ${this.contentTemplate}`;
+    ${this.headerTemplate()}
+    ${this.contentTemplate()}`;
   }
 
   /**
@@ -277,15 +243,63 @@ export class ImportBaseTable extends LitElement {
     }
     const { selectedIndexes } = this;
     return data.map((item, index) => html`
-    <anypoint-icon-item data-index="${index}" data-key="${item._id}">
+    <anypoint-icon-item data-index="${index}" data-key="${item.key}">
       <anypoint-checkbox
         data-index="${index}"
-        .checked="${selectedIndexes.indexOf(item._id) !== -1}"
+        .checked="${selectedIndexes.indexOf(item.key) !== -1}"
         slot="item-icon"
         aria-label="Toggle selection"
         tabindex="-1"
       ></anypoint-checkbox>
       ${this.itemBodyContentTemplate(item, index)}
     </anypoint-icon-item>`);
+  }
+
+  /**
+   * @returns {TemplateResult} A template for the table header
+   */
+  headerTemplate() {
+    const { tableTitle, selectedIndexes, opened, compatibility, allSelected } = this;
+    const cnt = selectedIndexes ? selectedIndexes.length : 0;
+    const iconClass = `toggle-icon${(opened ? ' opened' : '')}`;
+    return html`
+    <header class="title" @click="${this.toggleOpened}">
+      <anypoint-checkbox
+        class="select-all"
+        ?checked="${allSelected}"
+        title="Select / deselect all"
+        aria-label="Activate to select or deselect all"
+        @click="${this[toggleSelectedAllClick]}"
+        @checked-changed="${this[toggleSelectedAll]}"
+      ></anypoint-checkbox>
+      <h3>${tableTitle} (${cnt})</h3>
+      <anypoint-icon-button
+        class="${iconClass}"
+        aria-label="Activate to toggle table opened"
+        title="Toggle table opened"
+        ?compatibility="${compatibility}"
+      >
+        <span class="icon">${keyboardArrowDown}</span>
+      </anypoint-icon-button>
+    </header>`;
+  }
+
+  /**
+   * @returns {TemplateResult} A template for the table content
+   */
+  contentTemplate() {
+    return html`
+    <anypoint-collapse .opened="${this.opened}">
+      <anypoint-selector
+        multi
+        toggle
+        attrforselected="data-key"
+        selectable="anypoint-icon-item"
+        .selectedValues="${this.selectedIndexes}"
+        @selectedvalues-changed="${this[selectedHandler]}"
+      >
+      ${this.repeaterTemplate(this.data)}
+      </anypoint-selector>
+    </anypoint-collapse>`;
   }
 }

@@ -1,6 +1,12 @@
 import {LitElement, TemplateResult, CSSResult} from 'lit-element';
 import { AnypointSelector } from '@anypoint-web-components/anypoint-selector';
 
+export const toggleSelectedAll: unique symbol;
+export const toggleSelectedAllClick: unique symbol;
+export const selectedHandler: unique symbol;
+export const dataChanged: unique symbol;
+export const createSelectionArray: unique symbol;
+
 export abstract declare class ImportBaseTable<T> extends LitElement {
   static readonly styles: CSSResult|CSSResult[];
 
@@ -41,9 +47,8 @@ export abstract declare class ImportBaseTable<T> extends LitElement {
   readonly hasSelection: boolean;
   readonly list: AnypointSelector;
   readonly selectedItems: T[];
-  readonly headerTemplate: TemplateResult;
-  readonly tableHeaderTemplate: TemplateResult;
-  readonly contentTemplate: TemplateResult;
+  headerTemplate(): TemplateResult;
+  contentTemplate(): TemplateResult;
 
   constructor();
   firstUpdated(): void;
@@ -52,11 +57,12 @@ export abstract declare class ImportBaseTable<T> extends LitElement {
    * Toggles opened state
    */
   toggleOpened(): void;
-  _createSelectionArray(items: T[]): string[];
-  _dataChanged(data: T[]): void;
+  [createSelectionArray](items: T[]): string[];
+  [dataChanged](data: T[]): void;
   setSelected(values: string[]): void;
-  _selectedHandler(e: CustomEvent): void;
-  _toggleSelectAll(e: CustomEvent): void;
+  [selectedHandler](e: CustomEvent): void;
+  [toggleSelectedAllClick](e: PointerEvent): void;
+  [toggleSelectedAll](e: CustomEvent): void;
   render(): TemplateResult;
   itemBodyContentTemplate(item: T, index: number): TemplateResult;
   abstract itemBodyTemplate(item: T, index: number): TemplateResult|string;

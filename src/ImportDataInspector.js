@@ -15,6 +15,7 @@ the License.
 import { LitElement, html } from 'lit-element';
 import '@advanced-rest-client/date-time/date-time.js';
 import '@anypoint-web-components/anypoint-button/anypoint-button.js';
+import '../import-projects-table.js';
 import '../import-requests-table.js';
 import '../import-history-table.js';
 import '../import-variables-table.js';
@@ -28,11 +29,16 @@ import styles from './inspector/InspectorStyles.js';
 /** @typedef {import('lit-element').TemplateResult} TemplateResult */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportObject} ArcExportObject */
 /** @typedef {import('./inspector/ImportBaseTable').ImportBaseTable} ImportBaseTable */
+/** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcSavedRequest} ExportArcSavedRequest */
 
 export const importHandler = Symbol('importHandler');
 export const cancelHandler = Symbol('cancelHandler');
 export const getTableData = Symbol('getTableData');
+export const metaTemplate = Symbol('metaTemplate');
 export const createdTemplate = Symbol('createdTemplate');
+export const versionTemplate = Symbol('versionTemplate');
+export const projectsTemplate = Symbol('projectsTemplate');
+export const readNonProjectsData = Symbol('readNonProjectsData');
 export const requestsTableTemplate = Symbol('requestsTableTemplate');
 export const historyTableTemplate = Symbol('historyTableTemplate');
 export const variablesTableTemplate = Symbol('variablesTableTemplate');
@@ -58,7 +64,7 @@ export class ImportDataInspector extends LitElement {
       /**
        * Enables compatibility with Anypoint platform
        */
-      compatibility: { type: Boolean }
+      compatibility: { type: Boolean },
     };
   }
 
@@ -122,10 +128,22 @@ export class ImportDataInspector extends LitElement {
    */
   collectData() {
     const result = { ...this.data };
-    result.requests = this[getTableData]('import-requests-table');
-    if (!result.requests && result.projects) {
-      delete result.projects;
+    let projects;
+    let requests = [];
+    const table = (this.shadowRoot.querySelector('import-projects-table'));
+    if (table) {
+      const pItems = table.selectedItems;
+      if (pItems) {
+        projects = pItems;
+        requests = requests.concat(table.selectedRequests);
+      }
     }
+    const otherRequests = this[getTableData]('import-requests-table');
+    if (otherRequests) {
+      requests = requests.concat(otherRequests);
+    }
+    result.projects = projects;
+    result.requests = requests;
     result.history = this[getTableData]('import-history-table');
     result.variables = this[getTableData]('import-variables-table');
     result.cookies = this[getTableData]('import-cookies-table');
@@ -136,11 +154,33 @@ export class ImportDataInspector extends LitElement {
     return result;
   }
 
+  /**
+   * @param {ArcExportObject} data
+   * @returns {ExportArcSavedRequest[]|null}
+   */
+  [readNonProjectsData](data) {
+    const items = data.requests;
+    if (!Array.isArray(items) || !items.length) {
+      return null;
+    }
+    const result = [];
+    items.forEach((item) => {
+      if (!Array.isArray(item.projects) || !item.projects.length) {
+        result.push(item);
+      }
+    });
+    return result;
+  }
+
   render() {
     const { compatibility, data={} } = this;
+    if (!data) {
+      return '';
+    }
     const typedData = /** @type ArcExportObject */ (data);
     return html`
-    ${this[createdTemplate](typedData)}
+    ${this[metaTemplate](typedData)}
+    ${this[projectsTemplate](typedData, compatibility)}
     ${this[requestsTableTemplate](typedData, compatibility)}
     ${this[historyTableTemplate](typedData, compatibility)}
     ${this[variablesTableTemplate](typedData, compatibility)}
@@ -177,6 +217,37 @@ export class ImportDataInspector extends LitElement {
 
   /**
    * @param {ArcExportObject} data
+   * @returns {TemplateResult|string} A template for the import meta data
+   */
+  [metaTemplate](data) {
+    const created = this[createdTemplate](data);
+    const version = this[versionTemplate](data);
+    if (!created && !version) {
+      return '';
+    }
+    return html`
+    <div class="import-meta">
+      ${version}
+      ${created}
+    </div>
+    `;
+  }
+
+  /**
+   * @param {ArcExportObject} data
+   * @returns {TemplateResult|string} A template for the import meta data
+   */
+  [versionTemplate](data) {
+    if (!data.version) {
+      return '';
+    }
+    return html`
+    <p class="meta">Exported from ARC version ${data.version}</p>
+    `
+  }
+
+  /**
+   * @param {ArcExportObject} data
    * @returns {string|TemplateResult}
    */
   [createdTemplate](data) {
@@ -185,7 +256,9 @@ export class ImportDataInspector extends LitElement {
     if (Number.isNaN(time)) {
       return '';
     }
-    return html`<p class="meta">Exported at:
+    return html`
+    <p class="meta">
+      Created at:
       <date-time
         year="numeric"
         month="long"
@@ -195,7 +268,6 @@ export class ImportDataInspector extends LitElement {
         second="2-digit"
         .date="${data.createdAt}"
       ></date-time>
-      ${data.version ? html` from ARC version: ${data.version}` : ''}
     </p>`;
   }
 
@@ -204,14 +276,34 @@ export class ImportDataInspector extends LitElement {
    * @param {boolean} compatibility
    * @returns {string|TemplateResult}
    */
+  [projectsTemplate](data, compatibility) {
+    if (!data.projects) {
+      return '';
+    }
+    return html`
+      <import-projects-table
+        tableTitle="Projects"
+        .data="${data.projects}"
+        .requests="${data.requests}"
+        ?compatibility="${compatibility}"
+      ></import-projects-table>
+    `;
+  }
+
+  /**
+   * @param {ArcExportObject} data
+   * @param {boolean} compatibility
+   * @returns {string|TemplateResult}
+   */
   [requestsTableTemplate](data, compatibility) {
-    if (!data.requests || !data.requests.length) {
+    const items = this[readNonProjectsData](data);
+    if (!items) {
       return '';
     }
     return html`
     <import-requests-table
       tableTitle="Requests"
-      .data="${data.requests}"
+      .data="${items}"
       .projects="${data.projects}"
       ?compatibility="${compatibility}"
     ></import-requests-table>`;

@@ -29,7 +29,8 @@ export class ImportDataInspector extends LitElement {
   /**
    * Enables compatibility with Anypoint platform
    */
-  compatibility: boolean;
+  compatibility?: boolean;
+
   constructor();
 
   /**

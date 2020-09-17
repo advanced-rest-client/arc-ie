@@ -28,6 +28,6 @@ export class ImportWebsocketUrlHistoryTable extends ImportBaseTable {
    * @return {TemplateResult} Template for the cookie body.
    */
   itemBodyTemplate(item) {
-    return html`<div class="no-wrap">${item._id}</div>`;
+    return html`<div class="no-wrap">${item.key}</div>`;
   }
 }

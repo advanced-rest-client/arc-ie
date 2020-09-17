@@ -3,8 +3,6 @@ import { css } from 'lit-element';
 export default css`
 :host {
   display: block;
-  padding: 0 16px;
-  margin-bottom: 24px;
 }
 
 :host([opened]) {
@@ -20,11 +18,8 @@ export default css`
 
 h3 {
   flex: 1;
-  font-size: var(--arc-font-title-font-size);
-  font-weight: var(--arc-font-title-font-weight);
-  line-height: var(--arc-font-title-line-height);
+  font-size: 1.2rem;
   font-weight: 400;
-  margin-left: 14px;
 }
 
 .toggle-icon {
