@@ -33,6 +33,7 @@ export const toggleSelectedAllClick = Symbol('toggleSelectedAllClick');
 export const selectedHandler = Symbol('selectedHandler');
 export const dataChanged = Symbol('dataChanged');
 export const createSelectionArray = Symbol('createSelectionArray');
+export const toggleOpenedHandler = Symbol('toggleOpenedHandler');
 
 /**
  * Base table class. Contains methods and templates to be
@@ -131,13 +132,20 @@ export class ImportBaseTable extends LitElement {
   }
 
   /**
-   * Toggles opened state
+   * Handler for the toggle table click.
    * @param {PointerEvent} e
    */
-  toggleOpened(e) {
+  [toggleOpenedHandler](e) {
     if (e.defaultPrevented) {
       return;
     }
+    this.toggleOpened();
+  }
+
+  /**
+   * Toggles opened state
+   */
+  toggleOpened() {
     this.opened = !this.opened;
   }
 

@@ -114,13 +114,13 @@ describe('ArcDataImportElement', () => {
       return result;
     });
 
-    it('dispatches processloadingstart event', async () => {
+    it(`dispatches ${ProcessEventTypes.loadingstart} event`, async () => {
       const file = DataHelper.generateArcImportFile();
       const spy = sinon.spy();
       element.addEventListener(ProcessEventTypes.loadingstart, spy);
       await element.processFileData(file);
       assert.isTrue(spy.called);
-      assert.equal(spy.args[0][0].detail.message, 'Procerssing file data');
+      assert.equal(spy.args[0][0].detail.message, 'Processing file data');
     });
 
     it('calls toString() on Electron buffer', async () => {
@@ -182,7 +182,7 @@ describe('ArcDataImportElement', () => {
       assert.equal(message, 'test-error');
     });
 
-    it('dispatches processloadingstop event on error', async () => {
+    it(`dispatches ${ProcessEventTypes.loadingstart} event on error`, async () => {
       let id;
       element.addEventListener(ProcessEventTypes.loadingstart, function f(e) {
         element.removeEventListener(ProcessEventTypes.loadingstart, f);
@@ -215,7 +215,7 @@ describe('ArcDataImportElement', () => {
       });
     });
 
-    it('dispatches processloadingstop event when ready', async () => {
+    it(`dispatches ${ProcessEventTypes.loadingstart} event when ready`, async () => {
       let id;
       element.addEventListener(ProcessEventTypes.loadingstart, function f(e) {
         element.removeEventListener(ProcessEventTypes.loadingstart, f);

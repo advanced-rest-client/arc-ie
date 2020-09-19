@@ -6,6 +6,7 @@ export const toggleSelectedAllClick: unique symbol;
 export const selectedHandler: unique symbol;
 export const dataChanged: unique symbol;
 export const createSelectionArray: unique symbol;
+export const toggleOpenedHandler: unique symbol;
 
 export abstract declare class ImportBaseTable<T> extends LitElement {
   static readonly styles: CSSResult|CSSResult[];
@@ -53,6 +54,10 @@ export abstract declare class ImportBaseTable<T> extends LitElement {
   constructor();
   firstUpdated(): void;
 
+  /**
+   * Handler for the toggle table click.
+   */
+  [toggleOpenedHandler](e: PointerEvent): void;
   /**
    * Toggles opened state
    */

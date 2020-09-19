@@ -108,7 +108,7 @@ export class ArcDataImportElement extends LitElement {
    * @param file User file from the web or electron environment.
    * @param opts Additional options. `driveId` is only supported.
    */
-  processFileData(file: File|Uint8Array|Buffer, opts: FileImportOptions): Promise<void>;
+  processFileData(file: File|Uint8Array|Buffer, opts?: FileImportOptions): Promise<void>;
 
   /**
    * Processes normalized file import data.

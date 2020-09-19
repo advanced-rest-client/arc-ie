@@ -3,6 +3,7 @@ import { css } from 'lit-element';
 export default css`
 :host {
   display: block;
+  --anypoint-item-icon-width: 44px;
 }
 
 :host([opened]) {
@@ -49,7 +50,7 @@ h3 {
 }
 
 .method-label {
-  min-width: 90px;
+  margin: 0 12px;
 }
 
 .selected-counter {
@@ -75,5 +76,11 @@ http-method-label {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.selected .no-wrap,
+.selected *[secondary],
+.selected {
+  font-weight: 400;
 }
 `;

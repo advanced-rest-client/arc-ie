@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "Dexie",
     "appendexport",
     "appendrequest",
     "appversion",
@@ -25,6 +26,7 @@
     "onloadingchange",
     "processdata",
     "processfile",
+    "processloadingstart",
     "restclient",
     "selectedvalue",
     "selectedvalues",

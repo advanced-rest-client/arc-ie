@@ -211,7 +211,7 @@ export class ArcDataExportElement extends HTMLElement {
       throw new Error('The "options.file" property is not set.');
     }
     const providerConfig = { ...providerOptions, contentType: 'application/restclient+data' };
-    const exportObject = this.createExport(data, exportOptions);
+    const exportObject = await this.createExport(data, exportOptions);
     let payload = JSON.stringify(exportObject);
     if (exportOptions.encrypt) {
       payload = await this[encryptData](payload, exportOptions.passphrase);

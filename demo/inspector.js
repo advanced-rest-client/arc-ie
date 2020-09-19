@@ -41,6 +41,8 @@ class ComponentPage extends DemoPage {
     const history = /** @type ExportArcHistoryRequest[] */ (this.generator.generateHistoryRequestsData({
       requestsSize: 120
     })).map(this.mapExportKeys);
+    const certs = this.generator.generateExportClientCertificates();
+    console.log(certs);
     return {
       kind: 'ARC#import',
       createdAt: '2017-09-28T19:43:09.491',
@@ -53,6 +55,8 @@ class ComponentPage extends DemoPage {
       urlhistory: /** @type ExportArcUrlHistory[] */ (this.generator.generateUrlsData().map(this.mapExportKeys)),
       websocketurlhistory: /** @type ExportArcWebsocketUrl[] */ (this.generator.generateUrlsData().map(this.mapExportKeys)),
       authdata: /** @type ExportArcAuthData[] */ (this.generator.generateBasicAuthData().map(this.mapExportKeys)),
+      // @ts-ignore
+      clientcertificates: certs,
     };
   }
 

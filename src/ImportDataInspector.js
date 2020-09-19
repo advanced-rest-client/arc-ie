@@ -302,7 +302,7 @@ export class ImportDataInspector extends LitElement {
     }
     return html`
     <import-requests-table
-      tableTitle="Requests"
+      tableTitle="Other requests"
       .data="${items}"
       .projects="${data.projects}"
       ?compatibility="${compatibility}"

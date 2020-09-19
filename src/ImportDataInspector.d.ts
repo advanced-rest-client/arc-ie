@@ -4,7 +4,11 @@ import { DataExport } from '@advanced-rest-client/arc-types';
 export const importHandler: unique symbol;
 export const cancelHandler: unique symbol;
 export const getTableData: unique symbol;
+export const metaTemplate: unique symbol;
 export const createdTemplate: unique symbol;
+export const versionTemplate: unique symbol;
+export const projectsTemplate: unique symbol;
+export const readNonProjectsData: unique symbol;
 export const requestsTableTemplate: unique symbol;
 export const historyTableTemplate: unique symbol;
 export const variablesTableTemplate: unique symbol;
@@ -24,7 +28,7 @@ export class ImportDataInspector extends LitElement {
   /**
    * Imported data.
    */
-  data: DataExport.ArcExportObject[];
+  data: DataExport.ArcExportObject;
 
   /**
    * Enables compatibility with Anypoint platform
