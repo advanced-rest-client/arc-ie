@@ -1,7 +1,7 @@
 import { fixture, assert, nextFrame, html } from '@open-wc/testing';
-import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 import sinon from 'sinon';
 import '../import-data-inspector.js';
+import { DataHelper } from './DataHelper.js';
 import { getTableData, readNonProjectsData } from '../src/ImportDataInspector.js';
 
 /** @typedef {import('../index').ImportDataInspector} ImportDataInspector */
@@ -14,7 +14,6 @@ import { getTableData, readNonProjectsData } from '../src/ImportDataInspector.js
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcAuthData} ExportArcAuthData */
 
 describe('<import-data-inspector>', () => {
-  const generator = new DataGenerator();
   /**
    * @param {ArcExportObject=} data
    * @returns {Promise<ImportDataInspector>}
@@ -23,51 +22,11 @@ describe('<import-data-inspector>', () => {
     return fixture(html`<import-data-inspector .data="${data}"></import-data-inspector>`);
   }
 
-  function mapExportKeys(item) {
-    item.key = item._id;
-    delete item._id;
-    delete item._rev;
-    return item;
-  }
-
-  /**
-   * @returns {ArcExportObject}
-   */
-  function getImportData() {
-    const saved = generator.generateSavedRequestData({
-      requestsSize: 10,
-      projectsSize: 2
-    });
-    const historyData = /** @type ExportArcHistoryRequest[] */ (generator.generateHistoryRequestsData({
-      requestsSize: 10
-    })).map(mapExportKeys);
-    const certs = generator.generateExportClientCertificates({
-      size: 2,
-    }).map(mapExportKeys);
-    return {
-      kind: 'ARC#Import',
-      createdAt: '2017-09-28T19:43:09.491',
-      version: '9.14.64.305',
-      requests: saved.requests.map(mapExportKeys),
-      projects: saved.projects.map(mapExportKeys),
-      history: historyData,
-      variables: /** @type ExportArcVariable[] */ (generator.generateVariablesData().map(mapExportKeys)),
-      cookies: /** @type ExportArcCookie[] */ (generator.generateCookiesData().map(mapExportKeys)),
-      urlhistory: /** @type ExportArcUrlHistory[] */ (generator.generateUrlsData({
-        size: 10
-      }).map(mapExportKeys)),
-      websocketurlhistory: /** @type ExportArcWebsocketUrl[] */ (generator.generateUrlsData({
-        size: 5
-      }).map(mapExportKeys)),
-      authdata: /** @type ExportArcAuthData[] */ (generator.generateBasicAuthData().map(mapExportKeys)),
-      clientcertificates: certs,
-    };
-  }
 
   describe('import table test', () => {
     let element;
     beforeEach(async () => {
-      element = await basicFixture(getImportData());
+      element = await basicFixture(DataHelper.generateExportData());
     });
 
     it('dispatches "cancel" event', () => {
@@ -152,7 +111,7 @@ describe('<import-data-inspector>', () => {
   describe('[getTableData]()', () => {
     let element = /** @type ImportDataInspector */(null);
     beforeEach(async () => {
-      element = await basicFixture(getImportData());
+      element = await basicFixture(DataHelper.generateExportData());
     });
 
     it('computes list of selected objects', () => {
@@ -172,7 +131,7 @@ describe('<import-data-inspector>', () => {
   describe('collectData()', () => {
     let element = /** @type ImportDataInspector */(null);
     beforeEach(async () => {
-      element = await basicFixture(getImportData());
+      element = await basicFixture(DataHelper.generateExportData());
       await nextFrame();
     });
 

@@ -73,9 +73,7 @@ export class ArcDataImportElement extends LitElement {
   }
 
   connectedCallback() {
-    if (super.connectedCallback) {
-      super.connectedCallback();
-    }
+    super.connectedCallback();
     window.addEventListener(DataImportEventTypes.normalize, this[normalizeHandler]);
     window.addEventListener(DataImportEventTypes.dataimport, this[importHandler]);
     window.addEventListener(DataImportEventTypes.processfile, this[processFileHandler]);
@@ -83,9 +81,7 @@ export class ArcDataImportElement extends LitElement {
   }
 
   disconnectedCallback() {
-    if (super.disconnectedCallback) {
-      super.disconnectedCallback();
-    }
+    super.disconnectedCallback();    
     window.removeEventListener(DataImportEventTypes.normalize, this[normalizeHandler]);
     window.removeEventListener(DataImportEventTypes.dataimport, this[importHandler]);
     window.removeEventListener(DataImportEventTypes.processfile, this[processFileHandler]);
@@ -145,7 +141,7 @@ export class ArcDataImportElement extends LitElement {
    * @param {ArcImportFileEvent} e
    */
   [processFileHandler](e) {
-    if (!e || e.defaultPrevented) {
+    if (e.defaultPrevented) {
       return;
     }
     e.preventDefault();
@@ -185,7 +181,7 @@ export class ArcDataImportElement extends LitElement {
    */
   async processData(data) {
     const normalized = await this.normalizeImportData(data);
-    await this.handleNormalizedFileData(normalized);
+    this.handleNormalizedFileData(normalized);
   }
 
   /**
@@ -207,10 +203,8 @@ export class ArcDataImportElement extends LitElement {
     const store = new ImportFactory();
     const result = await store.importData(importObject);
     const { savedIndexes, historyIndexes } = store;
-    setTimeout(() => {
-      this[notifyIndexer](savedIndexes, historyIndexes);
-      ImportEvents.dataimported(this);
-    });
+    this[notifyIndexer](savedIndexes, historyIndexes);
+    ImportEvents.dataimported(this);
     return result;
   }
 
@@ -237,15 +231,19 @@ export class ArcDataImportElement extends LitElement {
   /**
    * Transforms any previous ARC export file to the current export object.
    *
-   * @param {string|object} data Data from the import file.
+   * @param {string|object|File|Blob} data Data from the import file.
    * @return {Promise<ArcExportObject>} Normalized data import object.
    */
   async normalizeImportData(data) {
-    if (typeof data === 'string') {
-      data = await this[decryptIfNeeded](data);
+    let importData = data;
+    if (importData.type) {
+      importData = await readFile(data);
+    }
+    if (typeof importData === 'string') {
+      importData = await this[decryptIfNeeded](importData);
     }
     const processor = new ImportNormalize();
-    return processor.normalize(data);
+    return processor.normalize(importData);
   }
 
   /**

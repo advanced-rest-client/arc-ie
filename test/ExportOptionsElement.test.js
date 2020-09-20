@@ -1,7 +1,11 @@
-import { fixture, assert } from '@open-wc/testing';
+import { fixture, assert, aTimeout, nextFrame } from '@open-wc/testing';
+import sinon from 'sinon';
+import { GoogleDriveEventTypes } from '@advanced-rest-client/arc-events';
 import '../export-options.js';
+import { driveSuggestionsValue, parentNameValue } from '../src/ExportPanelBase.js'
 
 /** @typedef {import('../index.js').ExportOptionsElement} ExportOptionsElement */
+/** @typedef {import('@anypoint-web-components/anypoint-input').AnypointInput} AnypointInput */
 
 describe('ExportOptionsElement', () => {
   /**
@@ -43,13 +47,13 @@ describe('ExportOptionsElement', () => {
       assert.ok(input);
     });
 
-    it('does not render encrypt file checkbox by defult', async () => {
+    it('does not render encrypt file checkbox by default', async () => {
       const element = await basicFixture();
       const input = element.shadowRoot.querySelector('anypoint-checkbox[name="encryptFile"]');
       assert.notOk(input);
     });
 
-    it('does not render password input by defult', async () => {
+    it('does not render password input by default', async () => {
       const element = await basicFixture();
       const input = element.shadowRoot.querySelector('anypoint-masked-input[name="passphrase"]');
       assert.notOk(input);
@@ -98,6 +102,154 @@ describe('ExportOptionsElement', () => {
     });
   });
 
+  describe('google drive support', () => {
+    let element = /** @type ExportOptionsElement */ (null);
+    beforeEach(async () => {
+      element = await validFixture();
+    });
+
+    it('sets isDrive when provider changes', () => {
+      assert.isFalse(element.isDrive);
+      element.provider = 'drive';
+      assert.isTrue(element.isDrive);
+    });
+
+    it('dispatches google drive folders list event', () => {
+      const spy = sinon.spy();
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, spy);
+      element.provider = 'drive';
+      assert.isTrue(spy.called);
+    });
+
+    it('sets driveFolders from the event', async () => {
+      const folders = [{ id: '1', name: '2' }];
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve(folders);
+      });
+      element.provider = 'drive';
+      await aTimeout(1);
+      assert.deepEqual(folders, element.driveFolders);
+    });
+
+    it('sets drive suggestions value', async () => {
+      const folders = [{ id: '1', name: '1' }, { name: '2' }, { id: '3' }, undefined];
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve(folders);
+      });
+      element.provider = 'drive';
+      await aTimeout(1);
+      assert.deepEqual(element[driveSuggestionsValue], [{ value: '1' }]);
+    });
+
+    it('resets suggestions when no folders', async () => {
+      element.driveFolders = [{ id: '1', name: '1' }];
+      const folders = [];
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve(folders);
+      });
+      element.provider = 'drive';
+      await aTimeout(1);
+      assert.isUndefined(element[driveSuggestionsValue]);
+    });
+
+    it('resets suggestions when query error', async () => {
+      element.driveFolders = [{ id: '1', name: '1' }];
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.reject(new Error('test'));
+      });
+      element.provider = 'drive';
+      await aTimeout(1);
+      assert.isUndefined(element[driveSuggestionsValue]);
+    });
+
+    it('sets drive folder name when folders change', async () => {
+      element.parentId = '1';
+      const folders = [{ id: '1', name: '1-name' }];
+      element.addEventListener(GoogleDriveEventTypes.listAppFolders, (e) => {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve(folders);
+      });
+      element.provider = 'drive';
+      await aTimeout(1);
+      assert.equal(element[parentNameValue], '1-name');
+    });
+  });
+
+  describe('user input', () => {
+    let element = /** @type ExportOptionsElement */ (null);
+    beforeEach(async () => {
+      element = await validFixture();
+    });
+
+    it('sets file name property', () => {
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-input[name="file"]'));
+      input.value = 'test';
+      input.dispatchEvent(new CustomEvent('input'));
+      assert.equal(element.file, 'test');
+    });
+
+    it('sets passphrase property', async () => {
+      element.withEncrypt = true;
+      element.encryptFile = true;
+      await nextFrame();
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-masked-input[name="passphrase"]'));
+      input.value = 'test';
+      input.dispatchEvent(new CustomEvent('value-changed'));
+      assert.equal(element.passphrase, 'test');
+    });
+
+    it('sets [parentNameValue] property', async () => {
+      element.isDrive = true;
+      await nextFrame();
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-input[name="parentId"]'));
+      input.value = 'test';
+      input.dispatchEvent(new CustomEvent('input'));
+      assert.equal(element[parentNameValue], 'test');
+    });
+
+    it('sets parentId property to the input value', async () => {
+      element.isDrive = true;
+      await nextFrame();
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-input[name="parentId"]'));
+      input.value = 'test';
+      input.dispatchEvent(new CustomEvent('input'));
+      assert.equal(element.parentId, 'test');
+    });
+
+    it('sets parentId property to the folder id', async () => {
+      element.isDrive = true;
+      await nextFrame();
+      element.driveFolders = [{ name: 'test', id: 'test-id' }];
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-input[name="parentId"]'));
+      input.value = 'test';
+      input.dispatchEvent(new CustomEvent('input'));
+      assert.equal(element.parentId, 'test-id');
+    });
+
+    it('sets skipImport property', () => {
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-checkbox[name="skipImport"]'));
+      input.click();
+      assert.isTrue(element.skipImport);
+    });
+
+    it('sets encryptFile property', async () => {
+      element.withEncrypt = true;
+      await nextFrame();
+      const input = /** @type AnypointInput */ (element.shadowRoot.querySelector('anypoint-checkbox[name="encryptFile"]'));
+      input.click();
+      assert.isTrue(element.encryptFile);
+    });
+  });
+
   describe('onaccept', () => {
     let element;
     beforeEach(async () => {
@@ -122,7 +274,7 @@ describe('ExportOptionsElement', () => {
       assert.isTrue(called);
     });
 
-    it('Unregisteres old function', () => {
+    it('Unregisters old function', () => {
       let called1 = false;
       let called2 = false;
       const f1 = () => {
@@ -164,7 +316,7 @@ describe('ExportOptionsElement', () => {
       assert.isTrue(called);
     });
 
-    it('Unregisteres old function', () => {
+    it('Unregisters old function', () => {
       let called1 = false;
       let called2 = false;
       const f1 = () => {
@@ -219,6 +371,48 @@ describe('ExportOptionsElement', () => {
       element.onresize = f2;
       element.provider = 'drive';
       element.onresize = null;
+      assert.isFalse(called1);
+      assert.isTrue(called2);
+    });
+  });
+
+  describe('ongoogledrivelistappfolders', () => {
+    let element;
+    beforeEach(async () => {
+      element = await basicFixture();
+    });
+
+    it('Getter returns previously registered handler', () => {
+      assert.isUndefined(element.ongoogledrivelistappfolders);
+      const f = () => {};
+      element.ongoogledrivelistappfolders = f;
+      assert.isTrue(element.ongoogledrivelistappfolders === f);
+    });
+
+    it('Calls registered function', () => {
+      let called = false;
+      const f = () => {
+        called = true;
+      };
+      element.ongoogledrivelistappfolders = f;
+      element.provider = 'drive';
+      element.ongoogledrivelistappfolders = null;
+      assert.isTrue(called);
+    });
+
+    it('Unregisteres old function', () => {
+      let called1 = false;
+      let called2 = false;
+      const f1 = () => {
+        called1 = true;
+      };
+      const f2 = () => {
+        called2 = true;
+      };
+      element.ongoogledrivelistappfolders = f1;
+      element.ongoogledrivelistappfolders = f2;
+      element.provider = 'drive';
+      element.ongoogledrivelistappfolders = null;
       assert.isFalse(called1);
       assert.isTrue(called2);
     });

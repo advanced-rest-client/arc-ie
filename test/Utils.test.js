@@ -2,7 +2,6 @@ import { assert } from '@open-wc/testing';
 import {
   generateFileName,
 } from '../index.js';
-import { DataHelper } from './DataHelper.js';
 
 describe('Utils', () => {
   describe('generateFileName()', () => {

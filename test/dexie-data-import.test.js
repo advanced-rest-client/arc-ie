@@ -1,6 +1,6 @@
 import { assert, fixture } from '@open-wc/testing';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
-import { DataTestHelper } from './DataTestHelper.js';
+import { DataHelper } from './DataHelper.js';
 import '../arc-data-import.js';
 
 /** @typedef {import('../src/ArcDataImportElement.js').ArcDataImportElement} ArcDataImportElement */
@@ -21,7 +21,7 @@ describe('Dexie legacy import', () => {
     let data;
     before(async () => {
       await generator.destroySavedRequestData();
-      const response = await DataTestHelper.getFile('dexie-data-export.json');
+      const response = await DataHelper.getFile('dexie-data-export.json');
       originalData = JSON.parse(response);
     });
 

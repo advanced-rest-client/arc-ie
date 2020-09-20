@@ -1381,4 +1381,84 @@ describe('ArcDataExportElement', () => {
       assert.lengthOf(certs, 2);
     });
   });
+
+  describe('[nativeExportHandler]()', () => {
+    let element = /** @type ArcDataExportElement */ (null);
+    beforeEach(async () => {
+      element = await basicFixture();
+    });
+
+    it('calls arcExport() with arguments', async () => {
+      const spy = sinon.spy(element, 'arcExport');
+      const data = { requests: true };
+      const exportOptions = { provider: 'file' };
+      const providerOptions = { file: 'test.file' };
+      element.addEventListener(DataExportEventTypes.fileSave, function f(e) {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve({});
+      });
+      await ExportEvents.nativeData(document.body, data, exportOptions, providerOptions);
+      assert.isTrue(spy.calledOnce);
+      const [expData, exOpts, provOpts] = spy.args[0];
+      assert.deepEqual(expData, data, 'data argument is set');
+      assert.deepEqual(exOpts, exportOptions, 'exportOptions argument is set');
+      assert.deepEqual(provOpts, providerOptions, 'providerOptions argument is set');
+    });
+
+    it('does nothing when the event is cancelled', async () => {
+      const spy = sinon.spy(element, 'arcExport');
+      const data = { requests: true };
+      const exportOptions = { provider: 'file' };
+      const providerOptions = { file: 'test.file' };
+      const target = document.createElement('span');
+      document.body.appendChild(target);
+      target.addEventListener(DataExportEventTypes.nativeData, function f(e) {
+        e.preventDefault();
+      });
+      await ExportEvents.nativeData(target, data, exportOptions, providerOptions);
+      document.body.removeChild(target);
+      assert.isFalse(spy.called);
+    });
+  });
+
+  describe('[exportHandler]()', () => {
+    let element = /** @type ArcDataExportElement */ (null);
+    beforeEach(async () => {
+      element = await basicFixture();
+    });
+
+    it('calls dataExport() with arguments', async () => {
+      const spy = sinon.spy(element, 'dataExport');
+      const data = { test: true };
+      const exportOptions = { provider: 'file' };
+      const providerOptions = { file: 'test.file' };
+      element.addEventListener(DataExportEventTypes.fileSave, function f(e) {
+        e.preventDefault();
+        // @ts-ignore
+        e.detail.result = Promise.resolve({});
+      });
+      await ExportEvents.customData(document.body, data, exportOptions, providerOptions);
+      assert.isTrue(spy.calledOnce);
+      const [expData, exOpts, provOpts] = spy.args[0];
+      assert.deepEqual(expData, data, 'data argument is set');
+      assert.deepEqual(exOpts, exportOptions, 'exportOptions argument is set');
+      assert.deepEqual(provOpts, providerOptions, 'providerOptions argument is set');
+    });
+
+    it('does nothing when the event is cancelled', async () => {
+      const spy = sinon.spy(element, 'dataExport');
+      const data = { requests: true };
+      const exportOptions = { provider: 'file' };
+      const providerOptions = { file: 'test.file' };
+      const target = document.createElement('span');
+      document.body.appendChild(target);
+      target.addEventListener(DataExportEventTypes.customData, function f(e) {
+        e.preventDefault();
+      });
+      await ExportEvents.customData(target, data, exportOptions, providerOptions);
+      document.body.removeChild(target);
+      assert.isFalse(spy.called);
+    });
+  });
 });

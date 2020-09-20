@@ -17,6 +17,8 @@ import '@advanced-rest-client/arc-icons/arc-icon.js';
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ProviderOptions} ProviderOptions */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportOptions} ExportOptions */
 /** @typedef {import('@polymer/iron-form').IronFormElement} IronFormElement */
+/** @typedef {import('@anypoint-web-components/anypoint-autocomplete').Suggestion} Suggestion */
+/** @typedef {import('@anypoint-web-components/anypoint-input').AnypointInput} AnypointInput */
 
 export const destinationTemplate = Symbol('destinationTemplate');
 export const fileInputTemplate = Symbol('fileInputTemplate');
@@ -40,6 +42,9 @@ const driveFoldersValue = Symbol('driveFoldersValue');
 const checkedHandler = Symbol('checkedHandler');
 const destinationHandler = Symbol('destinationHandler');
 
+/**
+ * @param {Event} e
+ */
 function stopEvent(e) {
   e.stopPropagation();
 }
@@ -253,16 +258,16 @@ export class ExportPanelBase extends LitElement {
       this.requestUpdate();
       return;
     }
-    const result = [];
+    const result = /** @type Suggestion[] */ ([]);
     const { parentId } = this;
     folders.forEach((folder) => {
       if (!folder || !folder.id || !folder.name) {
         return;
       }
-      result[result.length] = {
+      const suggestion = /** @type Suggestion */ ({
         value: folder.name,
-        id: folder.id
-      };
+      });
+      result[result.length] = suggestion;
       if (parentId && parentId === folder.id) {
         this[parentNameValue] = folder.name;
       }
@@ -271,13 +276,21 @@ export class ExportPanelBase extends LitElement {
     this.requestUpdate();
   }
 
+  /**
+   * @param {CustomEvent} e
+   */
   [inputHandler](e) {
-    const { name, value } = e.target;
+    const input = /** @type AnypointInput */ (e.target);
+    const { name, value } = input;
     this[name] = value;
   }
 
+  /**
+   * @param {CustomEvent} e
+   */
   [parentsInputHandler](e) {
-    let { value } = e.target;
+    const input = /** @type AnypointInput */ (e.target);
+    let { value } = input;
     this[parentNameValue] = value;
     const folders = /** @type AppFolder[] */ (this.driveFolders || []);
     const folder = folders.find((item) => item.name === value);

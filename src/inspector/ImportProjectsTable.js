@@ -96,7 +96,6 @@ export class ImportProjectsTable extends ImportBaseTable {
   }
 
   /**
-   * @readonly
    * @returns {ExportArcSavedRequest[]} A list of all requests selected in the projects
    * Note, this alters the list of projects in a request when a request belongs to more than a single project
    * and the project is not selected for import. 
@@ -140,7 +139,8 @@ export class ImportProjectsTable extends ImportBaseTable {
   constructor() {
     super();
     /**
-     * @param {string[]} value The list of ids of projects that are currently opened
+     * The list of ids of projects that are currently opened
+     * @type {string[]} 
      */
     this[openedProjectsValue] = [];
   }
