@@ -10,7 +10,7 @@ declare const resizeHandlerValue: unique symbol;
  *
  * Export options dialog for ARC.
  */
-export class ExportOptionsElement extends ExportPanelBase {
+export declare class ExportOptionsElement extends ExportPanelBase {
   static readonly styles: CSSResult;
 
   /**

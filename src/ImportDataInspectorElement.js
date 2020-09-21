@@ -52,7 +52,7 @@ export const actionsTemplate = Symbol('actionsTemplate');
 /**
  * An element to display tables of import data.
  */
-export class ImportDataInspector extends LitElement {
+export class ImportDataInspectorElement extends LitElement {
   static get styles() {
     return styles;
   }

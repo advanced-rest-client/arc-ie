@@ -1,16 +1,16 @@
 import { DataExport, Cookies } from '@advanced-rest-client/arc-types';
 import { ArcExportEvent, ArcDataExportEvent } from '@advanced-rest-client/arc-events';
 
-export const appVersionValue: unique symbol;
-export const electronCookiesValue: unique symbol;
-export const exportHandler: unique symbol;
-export const nativeExportHandler: unique symbol;
-export const exportFile: unique symbol;
-export const exportDrive: unique symbol;
-export const queryCookies: unique symbol;
-export const encryptData: unique symbol;
-export const getClientCertificatesEntries: unique symbol;
-export const prepareExportData: unique symbol;
+export declare const appVersionValue: unique symbol;
+export declare const electronCookiesValue: unique symbol;
+export declare const exportHandler: unique symbol;
+export declare const nativeExportHandler: unique symbol;
+export declare const exportFile: unique symbol;
+export declare const exportDrive: unique symbol;
+export declare const queryCookies: unique symbol;
+export declare const encryptData: unique symbol;
+export declare const getClientCertificatesEntries: unique symbol;
+export declare const prepareExportData: unique symbol;
 
 /**
  * Maps export key from the event to database name.

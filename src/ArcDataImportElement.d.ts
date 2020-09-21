@@ -3,13 +3,13 @@ import { ArcImportNormalizeEvent, ArcImportEvent, ArcImportFileEvent, ArcImportD
 import { IndexableRequest } from '@advanced-rest-client/arc-models';
 import { DataExport } from '@advanced-rest-client/arc-types';
 
-export const notifyIndexer: unique symbol;
-export const normalizeHandler: unique symbol;
-export const importHandler: unique symbol;
-export const processFileHandler: unique symbol;
-export const processDataHandler: unique symbol;
-export const decryptIfNeeded: unique symbol;
-export const notifyApiParser: unique symbol;
+export declare const notifyIndexer: unique symbol;
+export declare const normalizeHandler: unique symbol;
+export declare const importHandler: unique symbol;
+export declare const processFileHandler: unique symbol;
+export declare const processDataHandler: unique symbol;
+export declare const decryptIfNeeded: unique symbol;
+export declare const notifyApiParser: unique symbol;
 
 /**
  * An element that initializes import flows.

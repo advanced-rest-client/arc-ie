@@ -1,3 +1,3 @@
-import { ImportDataInspector } from './src/ImportDataInspector.js';
+import { ImportDataInspectorElement } from './src/ImportDataInspectorElement.js';
 
-window.customElements.define('import-data-inspector', ImportDataInspector);
+window.customElements.define('import-data-inspector', ImportDataInspectorElement);

@@ -1,7 +1,7 @@
-import {ImportDataInspector} from './src/ImportDataInspector';
+import {ImportDataInspectorElement} from './src/ImportDataInspectorElement';
 
 declare global {
   interface HTMLElementTagNameMap {
-    "import-data-inspector": ImportDataInspector;
+    "import-data-inspector": ImportDataInspectorElement;
   }
 }

@@ -1,28 +1,28 @@
 import {LitElement, CSSResult, TemplateResult} from 'lit-element';
 import { DataExport } from '@advanced-rest-client/arc-types';
 
-export const importHandler: unique symbol;
-export const cancelHandler: unique symbol;
-export const getTableData: unique symbol;
-export const metaTemplate: unique symbol;
-export const createdTemplate: unique symbol;
-export const versionTemplate: unique symbol;
-export const projectsTemplate: unique symbol;
-export const readNonProjectsData: unique symbol;
-export const requestsTableTemplate: unique symbol;
-export const historyTableTemplate: unique symbol;
-export const variablesTableTemplate: unique symbol;
-export const cookiesTableTemplate: unique symbol;
-export const authDataTableTemplate: unique symbol;
-export const urlsTableTemplate: unique symbol;
-export const socketUrlsTableTemplate: unique symbol;
-export const ccTableTemplate: unique symbol;
-export const actionsTemplate: unique symbol;
+export declare const importHandler: unique symbol;
+export declare const cancelHandler: unique symbol;
+export declare const getTableData: unique symbol;
+export declare const metaTemplate: unique symbol;
+export declare const createdTemplate: unique symbol;
+export declare const versionTemplate: unique symbol;
+export declare const projectsTemplate: unique symbol;
+export declare const readNonProjectsData: unique symbol;
+export declare const requestsTableTemplate: unique symbol;
+export declare const historyTableTemplate: unique symbol;
+export declare const variablesTableTemplate: unique symbol;
+export declare const cookiesTableTemplate: unique symbol;
+export declare const authDataTableTemplate: unique symbol;
+export declare const urlsTableTemplate: unique symbol;
+export declare const socketUrlsTableTemplate: unique symbol;
+export declare const ccTableTemplate: unique symbol;
+export declare const actionsTemplate: unique symbol;
 
 /**
  * An element to display tables of import data.
  */
-export class ImportDataInspector extends LitElement {
+export declare class ImportDataInspectorElement extends LitElement {
   static readonly styles: CSSResult;
 
   /**

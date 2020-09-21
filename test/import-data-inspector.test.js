@@ -2,9 +2,9 @@ import { fixture, assert, nextFrame, html } from '@open-wc/testing';
 import sinon from 'sinon';
 import '../import-data-inspector.js';
 import { DataHelper } from './DataHelper.js';
-import { getTableData, readNonProjectsData } from '../src/ImportDataInspector.js';
+import { getTableData, readNonProjectsData } from '../src/ImportDataInspectorElement.js';
 
-/** @typedef {import('../index').ImportDataInspector} ImportDataInspector */
+/** @typedef {import('../index').ImportDataInspectorElement} ImportDataInspectorElement */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportObject} ArcExportObject */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcHistoryRequest} ExportArcHistoryRequest */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcCookie} ExportArcCookie */
@@ -16,7 +16,7 @@ import { getTableData, readNonProjectsData } from '../src/ImportDataInspector.js
 describe('<import-data-inspector>', () => {
   /**
    * @param {ArcExportObject=} data
-   * @returns {Promise<ImportDataInspector>}
+   * @returns {Promise<ImportDataInspectorElement>}
    */
   async function basicFixture(data) {
     return fixture(html`<import-data-inspector .data="${data}"></import-data-inspector>`);
@@ -109,7 +109,7 @@ describe('<import-data-inspector>', () => {
   });
 
   describe('[getTableData]()', () => {
-    let element = /** @type ImportDataInspector */(null);
+    let element = /** @type ImportDataInspectorElement */(null);
     beforeEach(async () => {
       element = await basicFixture(DataHelper.generateExportData());
     });
@@ -129,7 +129,7 @@ describe('<import-data-inspector>', () => {
   });
 
   describe('collectData()', () => {
-    let element = /** @type ImportDataInspector */(null);
+    let element = /** @type ImportDataInspectorElement */(null);
     beforeEach(async () => {
       element = await basicFixture(DataHelper.generateExportData());
       await nextFrame();
@@ -194,7 +194,7 @@ describe('<import-data-inspector>', () => {
   });
 
   describe('[readNonProjectsData]()', () => {
-    let element = /** @type ImportDataInspector */(null);
+    let element = /** @type ImportDataInspectorElement */(null);
     beforeEach(async () => {
       element = await basicFixture();
     });
