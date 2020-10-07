@@ -491,3 +491,20 @@
 * creating a copy of an export object to not mess up data models [192e812](https://github.com/advanced-rest-client/arc-data-export/commit/192e812b15d5f9fedb1de036d6b72aaa482c84a9) by Pawel Psztyc
 
 
+<a name="1.0.0"></a>
+# 1.0.0 (2020-09-21)
+
+## Update
+
+* finishing element's firs version [972dabb](https://github.com/advanced-rest-client/arc-ie/commit/972dabbc159141267a5e2a90e954e1c1f86eb8c7) by Pawel
+* moving import logic to the models [be3d5a1](https://github.com/advanced-rest-client/arc-ie/commit/be3d5a1e62faf4e60b9c4af54689c6301c863782) by Pawel
+* moving projects to own table [e3e9839](https://github.com/advanced-rest-client/arc-ie/commit/e3e98391c6251872b64414889ed2facbe7f2cf7c) by Pawel
+* initial commit [0bf52dc](https://github.com/advanced-rest-client/arc-ie/commit/0bf52dc34f67aa98419004f4e102e7cc7d1cbbef) by Pawel
+
+
+## Testing
+
+* updated Travis configuration to connect to Sauce Labs [c9a02eb](https://github.com/advanced-rest-client/arc-ie/commit/c9a02eb7b37d4e229200afb633d625cf55ec55fb) by Pawel
+* finishing tests [7e4b1f5](https://github.com/advanced-rest-client/arc-ie/commit/7e4b1f5baa05a203b5b15a6fe42193a62c4f7a4d) by Pawel
+
+
