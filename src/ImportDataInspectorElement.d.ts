@@ -32,6 +32,7 @@ export declare class ImportDataInspectorElement extends LitElement {
 
   /**
    * Enables compatibility with Anypoint platform
+   * @attribute
    */
   compatibility?: boolean;
 

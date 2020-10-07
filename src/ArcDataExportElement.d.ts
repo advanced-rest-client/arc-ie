@@ -30,10 +30,12 @@ export declare class ArcDataExportElement extends HTMLElement {
   /**
    * Hosting application version number. If not set it sends `app-version`
    * custom event to query for the application version number.
+   * @attribute
    */
   appVersion?: string;
   /**
    * If set it uses arc electron session state module to read cookie data
+   * @attribute
    */
   electronCookies?: boolean;
 

@@ -32,7 +32,7 @@ describe('ExportOptionsElement', () => {
     <export-options
       file="test-file.json"
       provider="drive"
-      skipimport
+      skipImport
       parentId="test"
       withEncrypt
       encryptFile
@@ -83,7 +83,7 @@ describe('ExportOptionsElement', () => {
       assert.ok(input);
     });
 
-    it('does not render parent input by defult', async () => {
+    it('does not render parent input by default', async () => {
       const element = await basicFixture();
       const input = element.shadowRoot.querySelector('anypoint-input[name="parentId"]');
       assert.notOk(input);

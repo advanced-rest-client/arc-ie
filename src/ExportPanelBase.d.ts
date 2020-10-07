@@ -30,48 +30,59 @@ export declare class ExportPanelBase extends LitElement {
 
   /**
    * Export file name.
+   * @attribute
    */
   file?: string;
   /**
    * The identifier of the parent. It can be a file path for local filesystem
    * or Google Drive folder name.
+   * @attribute
    */
   parentId?: string;
   /**
    * Export provider. By default it is `drive` or `file`.
+   * @attribute
    */
   provider?: string;
   /**
    * Tells the application to set configuration on the export file to
    * skip import and insert project directly into workspace.
+   * @attribute
    */
   skipImport?: boolean;
   /**
    * Computed value, true when current provider is Google Drive.
+   * @attribute
    */
   isDrive?: boolean;
   /**
    * List of Google Drive folders created by this application.
+   * @attribute
    */
   driveFolders?: GoogleDrive.AppFolder[]
   /**
    * Enables Anypoint compatibility
+   * @attribute
    */
   compatibility?: boolean;
   /**
    * Enables outlined theme.
+   * @attribute
    */
   outlined?: boolean;
   /**
    * When set the encrypt file option is enabled.
+   * @attribute
    */
   encryptFile?: boolean;
   /**
    * Encryption passphrase
+   * @attribute
    */
   passphrase?: string;
   /**
    * When set it renders encryption options.
+   * @attribute
    */
   withEncrypt?: boolean;
 

@@ -46,7 +46,7 @@ export class ImportVariablesTable extends ImportBaseTable {
    */
   itemBodyTemplate(item) {
     return html`<div>
-      <span class="var-name">${item.variable}</span>:
+      <span class="var-name">${item.name}</span>:
       <span class="var-value">${item.value}</span>
     </div>
     <div secondary>

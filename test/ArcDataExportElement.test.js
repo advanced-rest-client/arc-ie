@@ -518,7 +518,7 @@ describe('ArcDataExportElement', () => {
         assert.typeOf(item, 'object', 'has the index object');
         assert.typeOf(item.key, 'string', 'has the key');
         assert.equal(item.kind, 'ARC#Variable', 'has the kind');
-        assert.typeOf(item.variable, 'string', 'has variable property');
+        assert.typeOf(item.name, 'string', 'has variable property');
       });
 
       it('gets large amount of data', async () => {

@@ -53,7 +53,9 @@ export class ArcExportFormElement extends ExportPanelBase {
    * ARC export event handler
    */
   onarcnativeexport: EventListener;
-
+  /**
+   * @attribute
+   */
   file: string;
 
   constructor();

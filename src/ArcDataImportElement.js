@@ -75,17 +75,17 @@ export class ArcDataImportElement extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener(DataImportEventTypes.normalize, this[normalizeHandler]);
-    window.addEventListener(DataImportEventTypes.dataimport, this[importHandler]);
-    window.addEventListener(DataImportEventTypes.processfile, this[processFileHandler]);
-    window.addEventListener(DataImportEventTypes.processdata, this[processDataHandler]);
+    window.addEventListener(DataImportEventTypes.dataImport, this[importHandler]);
+    window.addEventListener(DataImportEventTypes.processFile, this[processFileHandler]);
+    window.addEventListener(DataImportEventTypes.processData, this[processDataHandler]);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();    
     window.removeEventListener(DataImportEventTypes.normalize, this[normalizeHandler]);
-    window.removeEventListener(DataImportEventTypes.dataimport, this[importHandler]);
-    window.removeEventListener(DataImportEventTypes.processfile, this[processFileHandler]);
-    window.removeEventListener(DataImportEventTypes.processdata, this[processDataHandler]);
+    window.removeEventListener(DataImportEventTypes.dataImport, this[importHandler]);
+    window.removeEventListener(DataImportEventTypes.processFile, this[processFileHandler]);
+    window.removeEventListener(DataImportEventTypes.processData, this[processDataHandler]);
   }
 
   /**
@@ -204,7 +204,7 @@ export class ArcDataImportElement extends LitElement {
     const result = await store.importData(importObject);
     const { savedIndexes, historyIndexes } = store;
     this[notifyIndexer](savedIndexes, historyIndexes);
-    ImportEvents.dataimported(this);
+    ImportEvents.dataImported(this);
     return result;
   }
 
@@ -324,6 +324,7 @@ export class ArcDataImportElement extends LitElement {
     if (!data) {
       throw new Error('File has no import data');
     }
+    
     if (isSingleRequest(data)) {
       const obj = data.requests[0];
       if (opts && opts.driveId) {
@@ -332,9 +333,9 @@ export class ArcDataImportElement extends LitElement {
       delete obj.kind;
       obj._id = obj.key;
       delete obj.key;
-      WorkspaceEvents.appendrequest(this, obj);
+      WorkspaceEvents.appendRequest(this, obj);
     } else if (data.loadToWorkspace) {
-      WorkspaceEvents.appendexport(this, data);
+      WorkspaceEvents.appendExport(this, data);
     } else {
       ImportEvents.inspect(this, data);
     }
@@ -349,11 +350,11 @@ export class ArcDataImportElement extends LitElement {
    * @return {Promise<void>}
    */
   async [notifyApiParser](file) {
-    const result = await RestApiEvents.processfile(this, file);
+    const result = await RestApiEvents.processFile(this, file);
     if (!result) {
       throw new Error('API processor not available');
     }
-    RestApiEvents.dataready(this, result.model, result.type);
+    RestApiEvents.dataReady(this, result.model, result.type);
   }
 
   /**

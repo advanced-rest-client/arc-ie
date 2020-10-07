@@ -304,7 +304,6 @@ export class ImportDataInspectorElement extends LitElement {
     <import-requests-table
       tableTitle="Other requests"
       .data="${items}"
-      .projects="${data.projects}"
       ?compatibility="${compatibility}"
     ></import-requests-table>`;
   }

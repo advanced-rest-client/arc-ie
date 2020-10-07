@@ -39,25 +39,26 @@ describe('ArcDataImportElement', () => {
       });
     });
 
-    it('dispatches request-workspace-append event', () => {
+    it(`dispatches ${WorkspaceEventTypes.appendRequest} event`, () => {
       const spy = sinon.spy();
-      element.addEventListener(WorkspaceEventTypes.appendrequest, spy);
+      element.addEventListener(WorkspaceEventTypes.appendRequest, spy);
       const request = DataHelper.generateSingleRequestImport();
       element.handleNormalizedFileData(request);
       assert.isTrue(spy.called);
     });
 
-    it('Dispatches workspace append for project with forced open', () => {
+    it('dispatches workspace append for project with forced open', () => {
       const spy = sinon.spy();
-      element.addEventListener(WorkspaceEventTypes.appendexport, spy);
+      element.addEventListener(WorkspaceEventTypes.appendExport, spy);
       const data = DataHelper.generateProjectImportOpen();
       element.handleNormalizedFileData(data);
+      assert.isTrue(spy.called, 'the event is called');
       assert.deepEqual(spy.args[0][0].detail.data, data);
     });
 
-    it('Removes key and kind properties', () => {
+    it('removes key and kind properties', () => {
       const spy = sinon.spy();
-      element.addEventListener(WorkspaceEventTypes.appendrequest, spy);
+      element.addEventListener(WorkspaceEventTypes.appendRequest, spy);
       const request = DataHelper.generateSingleRequestImport();
       element.handleNormalizedFileData(request);
       assert.isUndefined(spy.args[0][0].detail.request.key);
@@ -66,7 +67,7 @@ describe('ArcDataImportElement', () => {
 
     it('Sets request _id', () => {
       const spy = sinon.spy();
-      element.addEventListener(WorkspaceEventTypes.appendrequest, spy);
+      element.addEventListener(WorkspaceEventTypes.appendRequest, spy);
       const request = DataHelper.generateSingleRequestImport();
       element.handleNormalizedFileData(request);
       assert.equal(spy.args[0][0].detail.request._id, '11013905-9b5a-49d9-adc8-f76ec3ead2f1');
@@ -74,7 +75,7 @@ describe('ArcDataImportElement', () => {
 
     it('Adds driveId', () => {
       const spy = sinon.spy();
-      element.addEventListener(WorkspaceEventTypes.appendrequest, spy);
+      element.addEventListener(WorkspaceEventTypes.appendRequest, spy);
       const request = DataHelper.generateSingleRequestImport();
       element.handleNormalizedFileData(request, { driveId: 'test' });
       assert.equal(spy.args[0][0].detail.request.driveId, 'test');
@@ -142,7 +143,7 @@ describe('ArcDataImportElement', () => {
     it('calls storeData() with arguments', async () => {
       const spy = sinon.spy(element, 'storeData');
       const data = DataHelper.generateMultiRequestImport();
-      await ImportEvents.dataimport(document.body, data);
+      await ImportEvents.dataImport(document.body, data);
       assert.isTrue(spy.calledOnce);
       const [expData] = spy.args[0];
       assert.deepEqual(expData, data, 'data argument is set');
@@ -151,7 +152,7 @@ describe('ArcDataImportElement', () => {
     it('throws when no data argument', async () => {
       let thrown = false;
       try {
-        await ImportEvents.dataimport(document.body, undefined);
+        await ImportEvents.dataImport(document.body, undefined);
       } catch (e) {
         thrown = true;
       }
@@ -163,10 +164,10 @@ describe('ArcDataImportElement', () => {
       const data = DataHelper.generateMultiRequestImport();
       const target = document.createElement('span');
       document.body.appendChild(target);
-      target.addEventListener(DataImportEventTypes.dataimport, function f(e) {
+      target.addEventListener(DataImportEventTypes.dataImport, function f(e) {
         e.preventDefault();
       });
-      await ImportEvents.dataimport(target, data);
+      await ImportEvents.dataImport(target, data);
       document.body.removeChild(target);
       assert.isFalse(spy.called);
     });
@@ -181,7 +182,7 @@ describe('ArcDataImportElement', () => {
     it('calls processFileData() with arguments', async () => {
       const spy = sinon.spy(element, 'processFileData');
       const data = DataHelper.generateArcImportFile();
-      await ImportEvents.processfile(document.body, data);
+      await ImportEvents.processFile(document.body, data);
       assert.isTrue(spy.calledOnce);
       const [expData] = spy.args[0];
       assert.deepEqual(expData, data, 'data argument is set');
@@ -190,7 +191,7 @@ describe('ArcDataImportElement', () => {
     it('throws when no data argument', async () => {
       let thrown = false;
       try {
-        await ImportEvents.processfile(document.body, undefined);
+        await ImportEvents.processFile(document.body, undefined);
       } catch (e) {
         thrown = true;
       }
@@ -202,10 +203,10 @@ describe('ArcDataImportElement', () => {
       const data = DataHelper.generateArcImportFile();
       const target = document.createElement('span');
       document.body.appendChild(target);
-      target.addEventListener(DataImportEventTypes.processfile, function f(e) {
+      target.addEventListener(DataImportEventTypes.processFile, function f(e) {
         e.preventDefault();
       });
-      await ImportEvents.processfile(target, data);
+      await ImportEvents.processFile(target, data);
       document.body.removeChild(target);
       assert.isFalse(spy.called);
     });
@@ -220,7 +221,7 @@ describe('ArcDataImportElement', () => {
     it('calls processFileData() with arguments', async () => {
       const spy = sinon.spy(element, 'processData');
       const data = DataHelper.generateMultiRequestImport();
-      await ImportEvents.processdata(document.body, data);
+      await ImportEvents.processData(document.body, data);
       assert.isTrue(spy.calledOnce);
       const [expData] = spy.args[0];
       assert.deepEqual(expData, data, 'data argument is set');
@@ -229,7 +230,7 @@ describe('ArcDataImportElement', () => {
     it('throws when no data argument', async () => {
       let thrown = false;
       try {
-        await ImportEvents.processdata(document.body, undefined);
+        await ImportEvents.processData(document.body, undefined);
       } catch (e) {
         thrown = true;
       }
@@ -241,10 +242,10 @@ describe('ArcDataImportElement', () => {
       const data = DataHelper.generateMultiRequestImport();
       const target = document.createElement('span');
       document.body.appendChild(target);
-      target.addEventListener(DataImportEventTypes.processdata, function f(e) {
+      target.addEventListener(DataImportEventTypes.processData, function f(e) {
         e.preventDefault();
       });
-      await ImportEvents.processdata(target, data);
+      await ImportEvents.processData(target, data);
       document.body.removeChild(target);
       assert.isFalse(spy.called);
     });
@@ -324,9 +325,9 @@ describe('ArcDataImportElement', () => {
       assert.isTrue(spy.calledOnce);
     });
 
-    it(`dispatches ${DataImportEventTypes.dataimported} event`, async () => {
+    it(`dispatches ${DataImportEventTypes.dataImported} event`, async () => {
       const spy = sinon.spy();
-      element.addEventListener(DataImportEventTypes.dataimported, spy);
+      element.addEventListener(DataImportEventTypes.dataImported, spy);
       const object = DataHelper.generateMultiRequestImport();
       await element.storeData(object);
       assert.isTrue(spy.calledOnce);
@@ -432,8 +433,8 @@ describe('ArcDataImportElement', () => {
     }
 
     afterEach(() => {
-      window.removeEventListener(RestApiEventTypes.processfile, apiParserHandler);
-      window.removeEventListener(RestApiEventTypes.processfile, apiParserErrorHandler);
+      window.removeEventListener(RestApiEventTypes.processFile, apiParserHandler);
+      window.removeEventListener(RestApiEventTypes.processFile, apiParserErrorHandler);
     });
 
     [
@@ -442,7 +443,7 @@ describe('ArcDataImportElement', () => {
     ].forEach((type) => {
       it(`Calls [notifyApiParser]() for file type ${type}`, () => {
         const file = /** @type File */ ({ type });
-        window.addEventListener(RestApiEventTypes.processfile, apiParserHandler);
+        window.addEventListener(RestApiEventTypes.processFile, apiParserHandler);
         const spy = sinon.spy(element, notifyApiParser);
         element.processFileData(file);
         assert.isTrue(spy.called);
@@ -455,7 +456,7 @@ describe('ArcDataImportElement', () => {
     ].forEach((name) => {
       it(`Calls [notifyApiParser]() for file with extension ${name}`, () => {
         const file = /** @type File */ ({ type: '', name });
-        window.addEventListener(RestApiEventTypes.processfile, apiParserHandler);
+        window.addEventListener(RestApiEventTypes.processFile, apiParserHandler);
         const spy = sinon.spy(element, notifyApiParser);
         element.processFileData(file);
         assert.isTrue(spy.called);
@@ -488,7 +489,7 @@ describe('ArcDataImportElement', () => {
 
     it('calls [notifyApiParser]() for unknown file with RAML spec', async () => {
       const file = DataHelper.generateRamlUnknownFile();
-      window.addEventListener(RestApiEventTypes.processfile, apiParserHandler);
+      window.addEventListener(RestApiEventTypes.processFile, apiParserHandler);
       const spy = sinon.spy(element, notifyApiParser);
       await element.processFileData(file);
       assert.isTrue(spy.called);
@@ -497,7 +498,7 @@ describe('ArcDataImportElement', () => {
 
     it('Calls [notifyApiParser]() for unknown file with OAS 2 JSON spec', async () => {
       const file = DataHelper.generateOas2JsonUnknownFile();
-      window.addEventListener(RestApiEventTypes.processfile, apiParserHandler);
+      window.addEventListener(RestApiEventTypes.processFile, apiParserHandler);
       const spy = sinon.spy(element, notifyApiParser);
       await element.processFileData(file);
       assert.isTrue(spy.called);
@@ -527,7 +528,7 @@ describe('ArcDataImportElement', () => {
     });
 
     it('rejects when api processor error', async () => {
-      window.addEventListener(RestApiEventTypes.processfile, apiParserErrorHandler);
+      window.addEventListener(RestApiEventTypes.processFile, apiParserErrorHandler);
       const file = DataHelper.generateRamlUnknownFile();
       let message;
       try {
@@ -547,7 +548,7 @@ describe('ArcDataImportElement', () => {
       });
       const spy = sinon.spy();
       element.addEventListener(ProcessEventTypes.loadingstop, spy);
-      window.addEventListener(RestApiEventTypes.processfile, apiParserHandler);
+      window.addEventListener(RestApiEventTypes.processFile, apiParserHandler);
       const file = DataHelper.generateOas2JsonUnknownFile();
       try {
         await element.processFileData(file);

@@ -13,11 +13,13 @@ export abstract declare class ImportBaseTable<T> extends LitElement {
 
   /**
    * Title of the table when using base table
+   * @attribute
    */
   tableTitle: string;
 
   /**
    * Indicates if the table is displaying list of items
+   * @attribute
    */
   opened: boolean;
 
@@ -33,11 +35,13 @@ export abstract declare class ImportBaseTable<T> extends LitElement {
 
   /**
    * True to select all elements from the list
+   * @attribute
    */
   allSelected: boolean;
 
   /**
    * Enables compatibility with Anypoint platform
+   * @attribute
    */
   compatibility: boolean;
 

@@ -46,13 +46,13 @@ describe('ArcDataExport', () => {
       assert.ok(input);
     });
 
-    it('does not render encrypt file checkbox by defult', async () => {
+    it('does not render encrypt file checkbox by default', async () => {
       const element = await basicFixture();
       const input = element.shadowRoot.querySelector('anypoint-checkbox[name="encryptFile"]');
       assert.notOk(input);
     });
 
-    it('does not render password input by defult', async () => {
+    it('does not render password input by default', async () => {
       const element = await basicFixture();
       const input = element.shadowRoot.querySelector('anypoint-masked-input[name="passphrase"]');
       assert.notOk(input);
@@ -84,7 +84,7 @@ describe('ArcDataExport', () => {
       assert.ok(input);
     });
 
-    it('does not render parent input by defult', async () => {
+    it('does not render parent input by default', async () => {
       const element = await fileFixture();
       const input = element.shadowRoot.querySelector('anypoint-input[name="parentId"]');
       assert.notOk(input);
@@ -120,7 +120,7 @@ describe('ArcDataExport', () => {
       element = await basicFixture();
     });
 
-    it('selectes deselecrted checkboxes', () => {
+    it('selects deselected checkboxes', () => {
       const nodes = /** @type NodeListOf<AnypointCheckbox> */ (element.shadowRoot.querySelectorAll('form anypoint-checkbox'));
       nodes[0].checked = false;
       element.selectAll();
