@@ -21,9 +21,11 @@ export declare const actionsTemplate: unique symbol;
 
 /**
  * An element to display tables of import data.
+ * @fires cancel
+ * @fires import
  */
 export declare class ImportDataInspectorElement extends LitElement {
-  static readonly styles: CSSResult;
+  static get styles(): CSSResult;
 
   /**
    * Imported data.

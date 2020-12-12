@@ -33,6 +33,8 @@ export declare const prepare: unique symbol;
  *
  * <export-panel></export-panel>
  * ```
+ * 
+ * @fires loadingchange When the `loading` state changes
  */
 export class ArcExportFormElement extends ExportPanelBase {
   [loadingProperty]: boolean;
@@ -40,9 +42,9 @@ export class ArcExportFormElement extends ExportPanelBase {
   [loadingChangeHandler]: EventListener;
   [arcnativeexportHandler]: EventListener;
 
-  static readonly styles: CSSResult;
+  static get styles(): CSSResult;
 
-  readonly loading: boolean;
+  get loading(): boolean;
 
   /**
    * `loadingchange` event listener

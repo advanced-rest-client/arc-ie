@@ -24,6 +24,9 @@ declare const listDriveFolders: unique symbol;
 declare const destinationHandler: unique symbol;
 declare const checkedHandler: unique symbol;
 
+/**
+ * @fires resize When the size of the element changes
+ */
 export declare class ExportPanelBase extends LitElement {
   [driveSuggestionsValue]?: Suggestion[];
   [parentNameValue]?: string;

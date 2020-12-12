@@ -26,7 +26,7 @@ export declare class ArcDataExportElement extends HTMLElement {
   [appVersionValue]?: string;
   [electronCookiesValue]?: boolean;
 
-  static readonly observedAttributes: string[];
+  static get observedAttributes(): string[];
   /**
    * Hosting application version number. If not set it sends `app-version`
    * custom event to query for the application version number.

@@ -131,7 +131,7 @@ class ComponentDemoPage extends DemoPage {
         </p>
         <arc-interactive-demo
           .states="${demoStates}"
-          @state-chanegd="${this._demoStateHandler}"
+          @state-changed="${this._demoStateHandler}"
           ?dark="${darkThemeActive}"
         >
           <arc-export-form
@@ -175,7 +175,7 @@ class ComponentDemoPage extends DemoPage {
     return html`
       <section class="documentation-section">
         <h2>Usage</h2>
-        <p>The export panel comes with 2 predefied styles:</p>
+        <p>The export panel comes with 2 predefined styles:</p>
         <ul>
           <li><b>Material</b> - Normal state</li>
           <li>
@@ -186,7 +186,7 @@ class ComponentDemoPage extends DemoPage {
           Export panel works with <code>arc-data-export</code> to generate
           export data. Different versions of ARC can have multiple implementation
           of this module. The communication between the components is by using
-          custom evenets.
+          custom events.
         </p>
       </section>
     `;

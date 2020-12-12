@@ -1,0 +1,1127 @@
+{
+  "version": "experimental",
+  "tags": [
+    {
+      "name": "arc-data-export",
+      "path": "./arc-data-export.js",
+      "description": "An element to handle data export for ARC.",
+      "attributes": [
+        {
+          "name": "appVersion",
+          "description": "Hosting application version number. If not set it sends `app-version`\ncustom event to query for the application version number.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "electronCookies",
+          "description": "If set it uses arc electron session state module to read cookie data",
+          "type": "boolean | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "appVersion",
+          "attribute": "appVersion",
+          "description": "Hosting application version number. If not set it sends `app-version`\ncustom event to query for the application version number.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "electronCookies",
+          "attribute": "electronCookies",
+          "description": "If set it uses arc electron session state module to read cookie data",
+          "type": "boolean | undefined"
+        }
+      ]
+    },
+    {
+      "name": "arc-data-import",
+      "path": "./arc-data-import.js",
+      "description": "An element that initializes import flows.\nThis element has general flow logic for the import actions. ARC support import from:\n- ARC current version\n- ARC any previous version\n- Postman (collections, requests, backup, environment)\n- RAML and OAS APIs.\n\nThe import process has (in most cases 3 steps):\n1. Normalize the data (create the export object from the input)\n2. Inspect data\n3. Import data\n\nStep 1 and 3 is handled by the `ImportFactory` and `ImportNormalize`\nclasses from ARC models module. The UI for the step 2 is in this module.\n\nWhen importing an API data additional steps are required but this element\nrecognizes the API data content and dispatches an event for the API processor library\nto process the API data."
+    },
+    {
+      "name": "arc-export-form",
+      "path": "./arc-export-form.js",
+      "description": "Export data form with export flow logic.\n\nProvides the UI and and logic to export data from the data store to `destination`\nexport method provider. It uses events API to communicate with other elements.\n\nRequired elements to be present in the DOM:\n\n-   `arc-data-export` - getting data from the datastore\n-   element that handles `file-data-save` event\n-   element that handles `google-drive-data-save` event\n\n### Example\n\n```html\n<arc-data-export app-version=\"12.0.0\" electron-cookies></arc-data-export>\n<google-drive-upload></google-drive-upload>\n<file-save></file-save>\n\n<export-panel></export-panel>\n```",
+      "attributes": [
+        {
+          "name": "file",
+          "description": "Export file name.",
+          "type": "string"
+        },
+        {
+          "name": "parentId",
+          "description": "The identifier of the parent. It can be a file path for local filesystem\nor Google Drive folder name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "provider",
+          "description": "Export provider. By default it is `drive` or `file`.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "skipImport",
+          "description": "Tells the application to set configuration on the export file to\nskip import and insert project directly into workspace.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "isDrive",
+          "description": "Computed value, true when current provider is Google Drive.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "driveFolders",
+          "description": "List of Google Drive folders created by this application.",
+          "type": "AppFolder[] | undefined"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables Anypoint compatibility",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "outlined",
+          "description": "Enables outlined theme.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "encryptFile",
+          "description": "When set the encrypt file option is enabled.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "passphrase",
+          "description": "Encryption passphrase",
+          "type": "string | undefined"
+        },
+        {
+          "name": "withEncrypt",
+          "description": "When set it renders encryption options.",
+          "type": "boolean | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "loading",
+          "type": "boolean"
+        },
+        {
+          "name": "onloadingchange",
+          "description": "`loadingchange` event listener",
+          "type": "EventListener"
+        },
+        {
+          "name": "onarcnativeexport",
+          "description": "ARC export event handler",
+          "type": "EventListener"
+        },
+        {
+          "name": "file",
+          "attribute": "file",
+          "description": "Export file name.",
+          "type": "string"
+        },
+        {
+          "name": "parentId",
+          "attribute": "parentId",
+          "description": "The identifier of the parent. It can be a file path for local filesystem\nor Google Drive folder name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "provider",
+          "attribute": "provider",
+          "description": "Export provider. By default it is `drive` or `file`.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "skipImport",
+          "attribute": "skipImport",
+          "description": "Tells the application to set configuration on the export file to\nskip import and insert project directly into workspace.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "isDrive",
+          "attribute": "isDrive",
+          "description": "Computed value, true when current provider is Google Drive.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "driveFolders",
+          "attribute": "driveFolders",
+          "description": "List of Google Drive folders created by this application.",
+          "type": "AppFolder[] | undefined"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables Anypoint compatibility",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "outlined",
+          "attribute": "outlined",
+          "description": "Enables outlined theme.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "encryptFile",
+          "attribute": "encryptFile",
+          "description": "When set the encrypt file option is enabled.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "passphrase",
+          "attribute": "passphrase",
+          "description": "Encryption passphrase",
+          "type": "string | undefined"
+        },
+        {
+          "name": "withEncrypt",
+          "attribute": "withEncrypt",
+          "description": "When set it renders encryption options.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "ongoogledrivelistappfolders",
+          "description": "The `googledrivelistappfolders` event handler",
+          "type": "EventListener"
+        }
+      ],
+      "events": [
+        {
+          "name": "loadingchange",
+          "description": "When the `loading` state changes"
+        },
+        {
+          "name": "resize",
+          "description": "When the size of the element changes"
+        }
+      ]
+    },
+    {
+      "name": "export-options",
+      "path": "./export-options.js",
+      "description": "`export-options`\n\nExport options dialog for ARC.",
+      "attributes": [
+        {
+          "name": "file",
+          "description": "Export file name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "parentId",
+          "description": "The identifier of the parent. It can be a file path for local filesystem\nor Google Drive folder name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "provider",
+          "description": "Export provider. By default it is `drive` or `file`.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "skipImport",
+          "description": "Tells the application to set configuration on the export file to\nskip import and insert project directly into workspace.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "isDrive",
+          "description": "Computed value, true when current provider is Google Drive.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "driveFolders",
+          "description": "List of Google Drive folders created by this application.",
+          "type": "AppFolder[] | undefined"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables Anypoint compatibility",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "outlined",
+          "description": "Enables outlined theme.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "encryptFile",
+          "description": "When set the encrypt file option is enabled.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "passphrase",
+          "description": "Encryption passphrase",
+          "type": "string | undefined"
+        },
+        {
+          "name": "withEncrypt",
+          "description": "When set it renders encryption options.",
+          "type": "boolean | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "onaccept",
+          "description": "The `accept` event handler",
+          "type": "EventListener"
+        },
+        {
+          "name": "oncancel",
+          "description": "The `cancel` event handler",
+          "type": "EventListener"
+        },
+        {
+          "name": "onresize",
+          "description": "The `resize` event handler",
+          "type": "EventListener"
+        },
+        {
+          "name": "file",
+          "attribute": "file",
+          "description": "Export file name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "parentId",
+          "attribute": "parentId",
+          "description": "The identifier of the parent. It can be a file path for local filesystem\nor Google Drive folder name.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "provider",
+          "attribute": "provider",
+          "description": "Export provider. By default it is `drive` or `file`.",
+          "type": "string | undefined"
+        },
+        {
+          "name": "skipImport",
+          "attribute": "skipImport",
+          "description": "Tells the application to set configuration on the export file to\nskip import and insert project directly into workspace.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "isDrive",
+          "attribute": "isDrive",
+          "description": "Computed value, true when current provider is Google Drive.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "driveFolders",
+          "attribute": "driveFolders",
+          "description": "List of Google Drive folders created by this application.",
+          "type": "AppFolder[] | undefined"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables Anypoint compatibility",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "outlined",
+          "attribute": "outlined",
+          "description": "Enables outlined theme.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "encryptFile",
+          "attribute": "encryptFile",
+          "description": "When set the encrypt file option is enabled.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "passphrase",
+          "attribute": "passphrase",
+          "description": "Encryption passphrase",
+          "type": "string | undefined"
+        },
+        {
+          "name": "withEncrypt",
+          "attribute": "withEncrypt",
+          "description": "When set it renders encryption options.",
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "ongoogledrivelistappfolders",
+          "description": "The `googledrivelistappfolders` event handler",
+          "type": "EventListener"
+        }
+      ],
+      "events": [
+        {
+          "name": "accept",
+          "description": "When the user confirms the dialog"
+        },
+        {
+          "name": "cancel",
+          "description": "When the user cancels the dialog"
+        },
+        {
+          "name": "resize",
+          "description": "When the size of the element changes"
+        }
+      ]
+    },
+    {
+      "name": "import-auth-data-table",
+      "path": "./import-auth-data-table.js",
+      "description": "An element to display list of authorization data to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-cc-table",
+      "path": "./import-cc-table.js",
+      "description": "An element to render list of authorization data to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult | CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-cookies-table",
+      "path": "./import-cookies-table.js",
+      "description": "An element to display list of cookies to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult | CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-data-inspector",
+      "path": "./import-data-inspector.js",
+      "description": "An element to display tables of import data.",
+      "attributes": [
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean | undefined"
+        }
+      ],
+      "properties": [
+        {
+          "name": "data",
+          "description": "Imported data.",
+          "type": "ArcExportObject"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean | undefined"
+        }
+      ],
+      "events": [
+        {
+          "name": "cancel"
+        },
+        {
+          "name": "import"
+        }
+      ]
+    },
+    {
+      "name": "import-history-table",
+      "path": "./import-history-table.js",
+      "description": "An element to display list of cookies to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-projects-table",
+      "path": "./import-projects-table.js",
+      "description": "An element to render list of projects to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "requests",
+          "description": "The list of requests that have a project",
+          "type": "ExportArcSavedRequest[]"
+        },
+        {
+          "name": "selectedRequests",
+          "description": "A list of all requests selected in the projects\nNote, this alters the list of projects in a request when a request belongs to more than a single project\nand the project is not selected for import.",
+          "type": "ExportArcSavedRequest[]"
+        },
+        {
+          "name": "styles",
+          "type": "CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-requests-table",
+      "path": "./import-requests-table.js",
+      "description": "An element to display list of request objects to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult | CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-url-history-table",
+      "path": "./import-url-history-table.js",
+      "description": "An element to render list of URLs history to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult | CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-variables-table",
+      "path": "./import-variables-table.js",
+      "description": "An element to display list of authorization data to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    },
+    {
+      "name": "import-websocket-url-history-table",
+      "path": "./import-websocket-url-history-table.js",
+      "description": "An element to render list of URLs history to import.",
+      "attributes": [
+        {
+          "name": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "styles",
+          "type": "CSSResult | CSSResult[]"
+        },
+        {
+          "name": "tableTitle",
+          "attribute": "tableTitle",
+          "description": "Title of the table when using base table",
+          "type": "string"
+        },
+        {
+          "name": "opened",
+          "attribute": "opened",
+          "description": "Indicates if the table is displaying list of items",
+          "type": "boolean"
+        },
+        {
+          "name": "data",
+          "description": "The data to display.",
+          "type": "T[]"
+        },
+        {
+          "name": "selectedIndexes",
+          "description": "List of IDs of selected items.",
+          "type": "string[]"
+        },
+        {
+          "name": "allSelected",
+          "attribute": "allSelected",
+          "description": "True to select all elements from the list",
+          "type": "boolean"
+        },
+        {
+          "name": "compatibility",
+          "attribute": "compatibility",
+          "description": "Enables compatibility with Anypoint platform",
+          "type": "boolean"
+        },
+        {
+          "name": "hasSelection",
+          "description": "If true, the user selected some elements on list. Check the\n`this.selectedIndexes` property to check for the selected elements.",
+          "type": "boolean"
+        },
+        {
+          "name": "list",
+          "type": "AnypointSelector"
+        },
+        {
+          "name": "selectedItems",
+          "type": "T[]"
+        }
+      ]
+    }
+  ]
+}
