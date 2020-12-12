@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 import { fixture, assert, html } from '@open-wc/testing';
 import * as sinon from 'sinon';
 import '@advanced-rest-client/arc-models/client-certificate-model.js';
@@ -416,8 +417,6 @@ describe('ArcDataExportElement', () => {
         assert.equal(item.kind, 'ARC#ClientCertificate', 'has the kind');
         assert.typeOf(item.type, 'string', 'has the type');
         assert.typeOf(item.name, 'string', 'has the name');
-        // @ts-ignore
-        assert.typeOf(item.dataKey, 'string', 'has the dataKey');
         assert.typeOf(item.created, 'number', 'has the created');
         assert.typeOf(item.cert, 'object', 'has the cert');
         assert.typeOf(item.pKey, 'object', 'has the pKey');

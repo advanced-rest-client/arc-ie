@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
 
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ArcExportObject} ArcExportObject */
@@ -166,7 +167,7 @@ DataHelper.generateProjectImportOpen = () => {
  * @returns {Promise<string>}
 */
 DataHelper.getFile = async (file) => {
-  const response = await fetch(`/base/test/data/${file}`);
+  const response = await fetch(`/test/data/${file}`);
   if (!response.ok) {
     throw new Error(`File ${file} is unavailable`);
   }
@@ -186,7 +187,8 @@ function mapExportKeys(item) {
 DataHelper.generateExportData = () => {
   const saved = generator.generateSavedRequestData({
     requestsSize: 10,
-    projectsSize: 2
+    projectsSize: 2,
+    forceProject: true,
   });
   const historyData = /** @type ExportArcHistoryRequest[] */ (generator.generateHistoryRequestsData({
     requestsSize: 10
