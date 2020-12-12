@@ -527,3 +527,19 @@
 * finishing tests [7e4b1f5](https://github.com/advanced-rest-client/arc-ie/commit/7e4b1f5baa05a203b5b15a6fe42193a62c4f7a4d) by Pawel
 
 
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/advanced-rest-client/arc-ie/compare/1.0.0...1.0.2) (2020-12-12)
+
+### Update
+
+* updating types [bf10d17](https://github.com/advanced-rest-client/arc-ie/commit/bf10d1787426b649ffe8dc08b0a54973f05ef43c) by Pawel Psztyc
+* [ci skip] automated merge master->stage. syncing main branches [90a7aa0](https://github.com/advanced-rest-client/arc-ie/commit/90a7aa0ef12af5a5e02cdf0507d70cd7861437ff) by Ci agent
+* [ci skip] automated merge master->stage. syncing main branches [c4d7687](https://github.com/advanced-rest-client/arc-ie/commit/c4d768792023a28b4b67801fd2dd42bb147be391) by Ci agent
+* updating events, types,  and models [a098793](https://github.com/advanced-rest-client/arc-ie/commit/a098793b6470c1a81e77753d299a45bb677bbfac) by Pawel
+
+
+### Testing
+
+* updating tests runner [3249ab8](https://github.com/advanced-rest-client/arc-ie/commit/3249ab8508ad34b6c59f1bb986c6c0c20cfbd300) by Pawel Psztyc
+
+
