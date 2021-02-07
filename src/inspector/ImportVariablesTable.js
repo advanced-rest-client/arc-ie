@@ -45,11 +45,12 @@ export class ImportVariablesTable extends ImportBaseTable {
    * @return {TemplateResult} Template for the variable body.
    */
   itemBodyTemplate(item) {
-    return html`<div>
+    return html`
+    <div>
       <span class="var-name">${item.name}</span>:
       <span class="var-value">${item.value}</span>
     </div>
-    <div secondary>
+    <div data-secondary>
       Environment: ${item.environment}
     </div>`;
   }
@@ -59,7 +60,8 @@ export class ImportVariablesTable extends ImportBaseTable {
    * @return {TemplateResult} Template for the variable list item.
    */
   itemBodyContentTemplate(item) {
-    return html`<anypoint-item-body twoline>
+    return html`
+    <anypoint-item-body twoline>
       ${this.itemBodyTemplate(item)}
     </anypoint-item-body>`;
   }
