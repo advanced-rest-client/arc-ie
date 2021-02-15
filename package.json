@@ -1,7 +1,7 @@
 {
   "name": "@advanced-rest-client/arc-ie",
   "description": "Advanced REST Client import-export UI module.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "Apache-2.0",
   "main": "index.js",
   "module": "index.js",
@@ -31,7 +31,7 @@
   "dependencies": {
     "@advanced-rest-client/arc-events": "^0.2.14",
     "@advanced-rest-client/arc-icons": "^3.3.0",
-    "@advanced-rest-client/arc-models": "^4.2.9",
+    "@advanced-rest-client/arc-models": "^4.2.12",
     "@advanced-rest-client/arc-types": "^0.2.49",
     "@advanced-rest-client/date-time": "^3.0.2",
     "@anypoint-web-components/anypoint-autocomplete": "^0.2.8",
