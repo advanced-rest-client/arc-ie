@@ -62,7 +62,7 @@ function exportItemsTemplate() {
   <anypoint-checkbox name="cookies" checked>Cookies</anypoint-checkbox>
   <anypoint-checkbox name="history" checked>Requests history</anypoint-checkbox>
   <anypoint-checkbox name="hostrules" checked>Host rules</anypoint-checkbox>
-  <anypoint-checkbox name="saved" checked>Projects and saved request list</anypoint-checkbox>
+  <anypoint-checkbox name="requests" checked>Projects and saved request list</anypoint-checkbox>
   <anypoint-checkbox name="variables" checked>Variables data</anypoint-checkbox>
   <anypoint-checkbox name="websocketurlhistory" checked>Web sockets history</anypoint-checkbox>
   <anypoint-checkbox name="urlhistory" checked>URL history</anypoint-checkbox>

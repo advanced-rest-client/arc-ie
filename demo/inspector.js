@@ -1,6 +1,7 @@
 import { html } from 'lit-html';
 import { DemoPage } from '@advanced-rest-client/arc-demo-helper';
 import { DataGenerator } from '@advanced-rest-client/arc-data-generator';
+import { ImportNormalize } from '@advanced-rest-client/arc-models';
 import '@polymer/paper-toast/paper-toast.js';
 import '../import-data-inspector.js';
 
@@ -11,6 +12,7 @@ import '../import-data-inspector.js';
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcUrlHistory} ExportArcUrlHistory */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcWebsocketUrl} ExportArcWebsocketUrl */
 /** @typedef {import('@advanced-rest-client/arc-types').DataExport.ExportArcAuthData} ExportArcAuthData */
+/** @typedef {import('@polymer/paper-toast').PaperToastElement} PaperToastElement */
 
 class ComponentPage extends DemoPage {
   constructor() {
@@ -21,6 +23,9 @@ class ComponentPage extends DemoPage {
     this.componentName = 'import-data-inspector';
     this.generator = new DataGenerator();
     this.data = this.generate();
+
+    this.selectHandler = this.selectHandler.bind(this);
+    this.importFileHandler = this.importFileHandler.bind(this);
   }
 
   mapExportKeys(item) {
@@ -61,12 +66,51 @@ class ComponentPage extends DemoPage {
   }
 
   cancelled() {
+    // @ts-ignore
     document.getElementById('cancelToast').opened = true;
   }
-
+  
   imported(e) {
+    // @ts-ignore
     document.getElementById('importToast').opened = true;
     console.log(e.detail);
+  }
+
+  selectHandler() {
+    const input = /** @type HTMLInputElement */ (document.getElementById('importFile'));
+    input.click();
+  }
+
+  /**
+   * @param {Event} e 
+   */
+  importFileHandler(e) {
+    const input = /** @type HTMLInputElement */ (e.target);
+    const file = input.files[0];
+    if (!file) {
+      return;
+    }
+    input.value = '';
+    this.processFile(file);
+  }
+
+  /**
+   * 
+   * @param {File} file The file to import
+   */
+  async processFile(file) {
+    const txt = await file.text();
+    const normalizer = new ImportNormalize();
+    try {
+      const data = await normalizer.normalize(txt);
+      console.log(data);
+      this.data = data;
+    } catch (e) {
+      const toast = /** @type PaperToastElement */ (document.getElementById('errorToast'));
+      toast.text = e.message;
+      toast.opened = true;
+      console.error(e);
+    }
   }
 
   _demoTemplate() {
@@ -87,6 +131,17 @@ class ComponentPage extends DemoPage {
 
       <paper-toast text="Cancel has been pressed" id="cancelToast"></paper-toast>
       <paper-toast text="Import data has been pressed" id="importToast"></paper-toast>
+      <paper-toast id="errorToast"></paper-toast>
+    `;
+  }
+
+  customImportTemplate() {
+    return html`
+    <section class="documentation-section">
+      <h3>Import ARC file</h3>
+      <anypoint-button @click="${this.selectHandler}">Select file</anypoint-button>
+      <input type="file" id="importFile" hidden @change="${this.importFileHandler}"/>
+    </section>
     `;
   }
 
@@ -94,6 +149,7 @@ class ComponentPage extends DemoPage {
     return html`
       <h2>Import data inspector</h2>
       ${this._demoTemplate()}
+      ${this.customImportTemplate()}
     `;
   }
 }
